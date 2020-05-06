@@ -7,7 +7,7 @@ _**Assumptions**_
 * Jenkins is added in the sudoers list
 * User has a github account setup and git bash installed on the development system
 
-**PART-1 Setting up local workspace and remote repository (github)**
+### PART-1 Setting up local workspace (git) and remote repository (github)
 
 * Create a workspace in any desired location.
 
@@ -44,62 +44,70 @@ git commit -m "First Commit"
 ```
 _As soon as the code is committed it will automatically be pushed to github repository by the post commit hook we created in step 6_
 
-9. We can now see that our repository is updated and has two branches: master and dev
+* We can now see that our repository is updated and has two branches: master and dev
 
-![](RackMultipart20200506-4-ap3eb5_html_b02023e6a81dd90a.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
 
-**PART -2 Setting Up Jenkins**
 
-1. Setup Job 1 as given by following images:
+### PART -2 Setting Up Jenkins
+**Job 1 will setup a production server that will be pulling the code from the master branch of the linked repository which will be triggered after the Quality team verifies the changes made in the dev branch.**
 
-Give Job Name
 
-![](RackMultipart20200506-4-ap3eb5_html_5b5966914ceda738.png)
+* Give Job name &quot;master-job&quot;
 
-Add the link of the github repository created before.
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(2).png)
 
-![](RackMultipart20200506-4-ap3eb5_html_42fbd18885258d36.png)
+* Add the link of the github repository created before.
 
-Select to Build the job through remote trigger and save the auth token for later use as follow:
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(3).png)
 
-As soon as the developer will commit the code on master branch this job will be triggered and the code will be deployed on the production server.
+* Select &quot;Trigger builds remotely&quot; to build the job through remote trigger and save the auth token for later use
 
-![](RackMultipart20200506-4-ap3eb5_html_a2790f13d37074e9.png)
+As soon as the developer will commit the code on master branch this job will be triggered using the url _**host_ip:8080/job/master-job/build/?token=Auth_Token**_ and the code will be deployed on the production server.
 
-Add the following script to be executed on building the job
+* Add the following script to be executed on the host while the job is being build.
+This script will check for a docker container with name &quot;master-docker&quot; and if not found it will deploy one container with the configuration and copy whatever data it pulled from the master branch into the folder _**/home/aws/kartikay/master**_ which will later be mounted on the production server container.
 
-![](RackMultipart20200506-4-ap3eb5_html_1c8d25b58a3b7dc3.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(9).png)
 
-Repeat the above steps for Job 2 with minor changes in the links
 
-![](RackMultipart20200506-4-ap3eb5_html_b295745853bcd1d3.png)
+**Job 2 will setup a test server that will be pulling the code from the dev branch of the linked repository and will be triggered after the developer commits the code in the dev branch.**
 
-Select dev as the branch to be used
 
-![](RackMultipart20200506-4-ap3eb5_html_97419a8cbf99988d.png)
+* Give Job name &quot;dev-job&quot;
 
-Configure the job to be triggered remotely for building and save the auth token for later use.
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(11).png)
+
+*  Add the link of the github repository created before and select dev as the branch to be used.
+
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(12).png)
+
+*  Select &quot;Trigger builds remotely&quot; to build the job through remote trigger and save the auth token for later use
+
+As soon as the developer will commit the code on dev branch this job will be triggered using the url _**host_ip:8080/job/dev-job/build/?token=Auth_Token**_ and the code will be deployed on the testing server.
+
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(13).png)
 
 As soon as the developer will commit the code on dev branch this job will be triggered and the code will be deployed on the testing server.
 
-![](RackMultipart20200506-4-ap3eb5_html_fb2e557bbc9d1353.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
 
 Add the following script to executed while building the job
 
-![](RackMultipart20200506-4-ap3eb5_html_16842bc60a37026f.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
 
 Configure the final test job
 
-![](RackMultipart20200506-4-ap3eb5_html_edaf12f14576fbab.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
 
 Add the repository link
 
-![](RackMultipart20200506-4-ap3eb5_html_86a99ae8ebdd033c.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
 
 Add remote build trigger
 
-![](RackMultipart20200506-4-ap3eb5_html_ca75a3d71aaad04e.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
 
 Now add post build action that will merge the branch with master branch when the test team will trigger this job upon verifying the changes in the dev branch and as soon as this job is build successfully, the dev branch will be merged with master branch and job 1 will be triggered for deploying the verified code on the production server.
 
-![](RackMultipart20200506-4-ap3eb5_html_9a93786d9c2ed14.png)
+![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(29).png)
