@@ -114,7 +114,7 @@ This script will check for a docker container with name &quot;dev-docker&quot; a
 **Job 3 will be triggered when the Quality team has verified the code and triggerd this job through the remote build trigger. This Job will merge the dev branch and the master branch,  after merging it will trigger Job 1.**
 
 
-* Give Job name &quot;dev-test-job&quot.
+* Give Job name &quot;dev-test-job&quot;.
 
 ![](https://github.com/kartikay1506/devops-trainin-assignment/blob/master/images/2020-05-06%20(22).png)
 
